@@ -3,34 +3,32 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 如果你的默认分支是 main（或者 master，修改为对应分支）
+      - main  # 或其他你的主分支
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write  # 给 GitHub Actions 权限进行推送操作
+
     steps:
-    # Step 1: Checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Step 2: Set up Node.js (如果你是用 JavaScript 或者 Node.js 进行构建)
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'  # 你可以根据自己的项目需要调整 Node.js 版本
+        node-version: '16'  # 根据你的项目设置 Node.js 版本
 
-    # Step 3: Install dependencies
     - name: Install dependencies
-      run: npm install  # 如果你的项目使用 npm，运行 npm install。对于 yarn，使用 yarn install。
+      run: npm install
 
-    # Step 4: Build the project
     - name: Build project
-      run: npm run build  # 假设你使用 npm run build 构建项目，确保你的项目中有 build 命令
+      run: npm run build  # 如果你的项目需要构建
 
-    # Step 5: Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自动生成的 token 用于访问仓库
-        publish_dir: ./dist  # 发布目录，假设构建文件存放在 ./dist 文件夹下
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build  # 确保是构建后的文件夹路径
