@@ -3,32 +3,31 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 或其他你的主分支
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write  # 给 GitHub Actions 权限进行推送操作
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'  # 根据你的项目设置 Node.js 版本
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: |
+          npm install
+          npm run build
 
-    - name: Build project
-      run: npm run build  # 如果你的项目需要构建
+      - name: Increase Git push buffer size
+        run: git config --global http.postBuffer 524288000  # 500MB
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: /  # 确保是构建后的文件夹路径
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /  # 你的构建目录
